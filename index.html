@@ -322,26 +322,45 @@
         </button>
     </div>
 
-    <div class="music-player" id="musicPlayer">
-        <img src="images/song-image.jpg" alt="Song Image">
-        <div class="song-info">
-            <p>лиззз - ошибка</p>
-            <input type="range" id="songProgress" value="0" max="100">
-        </div>
-        <div class="buttons">
-            <button id="playPauseBtn" class="play-btn"><i class="fas fa-play"></i></button>
-            <button id="muteBtn" class="mute-btn"><i class="fas fa-volume-up"></i></button>
-        </div>
+<div class="music-player" id="musicPlayer">
+    <img src="images/song-image.jpg" alt="Song Image">
+    <div class="song-info">
+        <p id="currentSong">лиззз - ошибка</p>
+        <input type="range" id="songProgress" value="0" max="100">
     </div>
+    <div class="buttons">
+        <button id="prevBtn" class="prev-btn"><i class="fas fa-backward"></i></button>
+        <button id="playPauseBtn" class="play-btn"><i class="fas fa-play"></i></button>
+        <button id="nextBtn" class="next-btn"><i class="fas fa-forward"></i></button>
+        <button id="muteBtn" class="mute-btn"><i class="fas fa-volume-up"></i></button>
+    </div>
+</div>
 
-    <audio id="audioPlayer" src="songs/sample-song.mp3"></audio>
+<audio id="audioPlayer"></audio>
 
-    <script>
+<script>
     const audioPlayer = document.getElementById('audioPlayer');
     const playPauseBtn = document.getElementById('playPauseBtn');
     const muteBtn = document.getElementById('muteBtn');
     const songProgress = document.getElementById('songProgress');
-    const bioCard = document.getElementById('bioCard');
+    const currentSongDisplay = document.getElementById('currentSong');
+
+    // Массив с треками
+    const songs = [
+        { title: "лиззз - ошибка", src: "songs/sample-song.mp3" },
+        { title: "трек 2 - название", src: "songs/sample-song2.mp3" },
+        { title: "трек 3 - название", src: "songs/yet-another-song.mp3" }
+    ];
+
+    let currentSongIndex = 0;
+
+    function loadSong(index) {
+        audioPlayer.src = songs[index].src;
+        currentSongDisplay.textContent = songs[index].title;
+        audioPlayer.load();
+    }
+
+    loadSong(currentSongIndex);
 
     playPauseBtn.addEventListener('click', () => {
         if (audioPlayer.paused) {
@@ -354,42 +373,39 @@
     });
 
     muteBtn.addEventListener('click', () => {
-        if (audioPlayer.muted) {
-            audioPlayer.muted = false;
-            muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-        } else {
-            audioPlayer.muted = true;
-            muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-        }
+        audioPlayer.muted = !audioPlayer.muted;
+        muteBtn.innerHTML = audioPlayer.muted 
+            ? '<i class="fas fa-volume-mute"></i>' 
+            : '<i class="fas fa-volume-up"></i>';
     });
 
-    bioCard.addEventListener('mousemove', (event) => {
-        const cardRect = bioCard.getBoundingClientRect();
-        const cardCenterX = cardRect.left + cardRect.width / 2;
-        const cardCenterY = cardRect.top + cardRect.height / 2;
-
-        const deltaX = event.clientX - cardCenterX;
-        const deltaY = event.clientY - cardCenterY;
-
-        const rotateX = deltaY / 20;
-        const rotateY = -deltaX / 20;
-
-        bioCard.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    document.getElementById('prevBtn').addEventListener('click', () => {
+        currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+        loadSong(currentSongIndex);
+        audioPlayer.play();
+        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
     });
 
-    bioCard.addEventListener('mouseleave', () => {
-        bioCard.style.transform = 'rotateX(0deg) rotateY(0deg)';
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        currentSongIndex = (currentSongIndex + 1) % songs.length;
+        loadSong(currentSongIndex);
+        audioPlayer.play();
+        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
     });
 
-        audioPlayer.addEventListener('timeupdate', () => {
-            const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-            songProgress.value = progress;
-        });
+    audioPlayer.addEventListener('ended', () => {
+        document.getElementById('nextBtn').click(); // автоматически переключаем на следующий тре��
+    });
 
-        songProgress.addEventListener('input', () => {
-            const progress = songProgress.value;
-            audioPlayer.currentTime = (progress / 100) * audioPlayer.duration;
-        });
+    audioPlayer.addEventListener('timeupdate', () => {
+        const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+        songProgress.value = progress;
+    });
+
+    songProgress.addEventListener('input', () => {
+        const newTime = (songProgress.value / 100) * audioPlayer.duration;
+        audioPlayer.currentTime = newTime;
+    });
 
         const showDetailsBtn = document.getElementById('showDetailsBtn');
         const hideDetailsBtn = document.getElementById('hideDetailsBtn');
