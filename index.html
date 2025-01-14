@@ -7,6 +7,31 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
         <style>
+        body {
+            background-color: #282c34;
+            overflow: hidden; /* Скрываем скроллбар */
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .particle {
+            position: absolute;
+            color: white;
+            font-size: 10px; /* Уменьшен размер текста */
+            opacity: 0.7; /* Увеличена прозрачность */
+            pointer-events: none; /* Игнорируем события мыши */
+            animation: float 5s infinite;
+            text-shadow: 0 0 5px pink, 0 0 10px pink; /* Эффект розового свечения */
+        }
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); } /* Уменьшено смещение */
+            100% { transform: translateY(0); }
+        }
+    </style>
+        <style>
         body { margin: 0; overflow: hidden; background: #020202; }
         .particle {
             position: absolute;
@@ -455,6 +480,22 @@
         };
 
         setInterval(createParticle, 300); // Создаем новую частицу каждые 300 мс
+    <script>
+    const particleCount = 20; // Количество частиц
+
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        particle.innerText = 'лохушечка';
+        
+        // Устанавливаем случайные позиции частиц
+        particle.style.left = Math.random() * 100 + 'vw'; // по ширине
+        particle.style.top = Math.random() * 100 + 'vh'; // по высоте
+        
+        // Добавляем частицу в body
+        document.body.appendChild(particle);
+    }
+</script>
     </script>
 </body>
 </html>
