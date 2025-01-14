@@ -321,6 +321,7 @@
         </button>
     </div>
 
+
 <div class="music-player" id="musicPlayer">
     <img src="images/song-image.jpg" alt="Song Image">
     <div class="song-info">
@@ -333,6 +334,7 @@
         <button id="nextBtn" class="next-btn"><i class="fas fa-forward"></i></button>
         <button id="muteBtn" class="mute-btn"><i class="fas fa-volume-up"></i></button>
     </div>
+    <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="1" style="width: 100%; margin-top: 10px;"> <!-- Ползунок громкости -->
 </div>
 
 <audio id="audioPlayer"></audio>
@@ -343,6 +345,7 @@
     const muteBtn = document.getElementById('muteBtn');
     const songProgress = document.getElementById('songProgress');
     const currentSongDisplay = document.getElementById('currentSong');
+    const volumeControl = document.getElementById('volumeControl');
 
     // Массив с треками
     const songs = [
@@ -364,6 +367,7 @@
     }
 
     loadSong(currentSongIndex);
+    audioPlayer.volume = volumeControl.value; // Установка начального значения громкости
 
     playPauseBtn.addEventListener('click', () => {
         if (audioPlayer.paused) {
@@ -382,6 +386,10 @@
             : '<i class="fas fa-volume-up"></i>';
     });
 
+    volumeControl.addEventListener('input', () => {
+        audioPlayer.volume = volumeControl.value; // Установка громкости
+    });
+
     document.getElementById('prevBtn').addEventListener('click', () => {
         currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
         loadSong(currentSongIndex);
@@ -397,7 +405,7 @@
     });
 
     audioPlayer.addEventListener('ended', () => {
-        document.getElementById('nextBtn').click(); // автоматически переключаем на следующий тре��
+        document.getElementById('nextBtn').click(); // автоматически переключаем на следующий трек
     });
 
     audioPlayer.addEventListener('timeupdate', () => {
@@ -409,7 +417,6 @@
         const newTime = (songProgress.value / 100) * audioPlayer.duration;
         audioPlayer.currentTime = newTime;
     });
-
         const showDetailsBtn = document.getElementById('showDetailsBtn');
         const hideDetailsBtn = document.getElementById('hideDetailsBtn');
         const bioCardDetails = document.getElementById('bioCardDetails');
